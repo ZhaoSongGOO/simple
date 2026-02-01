@@ -7,6 +7,10 @@ MEMORY
 
 _estack = ORIGIN(RAM) + LENGTH(RAM);
 
+_Min_Heap_Size = 0x200;
+
+_Min_Stack_Size = 0x400;
+
 SECTIONS 
 {
     .isr_vector : 
@@ -16,12 +20,46 @@ SECTIONS
         . = ALIGN(4);
     } > FLASH
 
-    /* 如果你注释掉了 .text，链接器可能会因为没有任何段进入 FLASH 而报错 */
     .text :
     {
         . = ALIGN(4);
+        *(.text)
         *(.text*)
         *(.rodata*)
         . = ALIGN(4);
+        _etext = .;
     } > FLASH
+
+    _sidata = LOADADDR(.data);
+
+    .data :
+    {
+        . = ALIGN(4);
+        _sdata = .;
+        *(.data)
+        *(.data*)
+        . = ALIGN(4);
+        _edata = .;
+    } > RAM AT> FLASH
+
+    .bss :
+    {
+        . = ALIGN(4);
+        _sbss = .;
+        *(.bss)
+        *(.bss*)
+        *(COMMON)
+        . = ALIGN(4);
+        _ebss = .;
+    } > RAM
+
+    .user_heap_stack :
+    {
+        . = ALIGN(8);
+        PROVIDE ( end = . );
+        PROVIDE ( _end = . );
+        . = . + _Min_Heap_Size;
+        . = . + _Min_Stack_Size;
+        . = ALIGN(8);
+    } >RAM
 }
