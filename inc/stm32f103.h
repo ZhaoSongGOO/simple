@@ -123,4 +123,11 @@ typedef struct {
 #define APB1_CLOCK_FREQ (SYSTEM_CLOCK_FREQ / 2)
 #define APB2_CLOCK_FREQ SYSTEM_CLOCK_FREQ
 
+
+#define FLASH_R_BASE       0x40022000UL
+#define FLASH_ACR          (*(volatile uint32_t *)(FLASH_R_BASE + 0x00))
+
+#define FLASH_ACR_LATENCY_2  (0x2UL << 0)  // 2个等待周期，适用于 48MHz < SYSCLK <= 72MHz
+#define FLASH_ACR_PRFTBE     (0x1UL << 4)  // 开启预取缓冲区 (建议开启以提升性能)
+
 #endif
