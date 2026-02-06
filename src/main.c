@@ -9,6 +9,7 @@ int main() {
   TFT_Init();
   TFT_Clear(TFT_BLACK);
   TFT_DrawRect(10, 10, 50, 100, TFT_RED);
+  TFT_DrawRect(0, 0, TFT_WIDTH, TFT_HEIGHT, TFT_WHITE);
   while (1) {
     GPIO_TogglePin(GPIO_PORT_A, 8);
     Delay_ms(500);

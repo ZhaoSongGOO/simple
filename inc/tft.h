@@ -6,8 +6,8 @@
 #define TFT_WHITE 0xFFFF
 #define TFT_RED 0xF800
 
-#define TFT_WIDTH 240
-#define TFT_HEIGHT 320
+#define TFT_WIDTH 128
+#define TFT_HEIGHT 160
 
 void TFT_Init(void);
 void TFT_Clear(uint16_t color);
