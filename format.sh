@@ -10,3 +10,5 @@ clang-format -i src/tft.c
 
 clang-format -i inc/spi.h
 clang-format -i src/spi.c
+
+clang-format -i inc/font.h

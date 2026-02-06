@@ -1,4 +1,5 @@
 #include "tft.h"
+#include "font.h"
 #include "gpio.h"
 #include "spi.h"
 #include "stm32f103.h"
@@ -138,8 +139,34 @@ void TFT_DrawRect(uint16_t x1, uint16_t y1, uint16_t w, uint16_t h,
 }
 
 void TFT_Clear(uint16_t color) {
-  TFT_SetWindow(0, 0, 127, 159); // 1.8寸屏分辨率通常是 128x160
-  for (uint32_t i = 0; i < 128 * 160; i++) {
+  TFT_SetWindow(0, 0, TFT_WIDTH, TFT_HEIGHT); // 1.8寸屏分辨率通常是 128x160
+  for (uint32_t i = 0; i < TFT_WIDTH * TFT_HEIGHT; i++) {
     TFT_WriteData16(color);
+  }
+}
+
+void TFT_SetChar(uint16_t x, uint16_t y, char ch, uint16_t color,
+                 uint16_t bgcolor) {
+  uint8_t i, j, temp;
+  if (ch < ' ' || ch > 'z')
+    ch = ' ';
+
+  // 偏移量计算：每个字符16字节
+  uint32_t offset = (uint32_t)(ch - ' ') * 16;
+
+  // 2. 划定一个 8x16 的矩形窗口
+  TFT_SetWindow(x, y, x + 8 - 1, y + 16 - 1);
+
+  // 3. 连续写入 128 个像素的颜色
+  for (i = 0; i < 16; i++) {      // 遍历 16 行
+    temp = FONT_8x16[offset + i]; // 取出一行的点阵 (8位)
+    for (j = 0; j < 8; j++) {     // 遍历这一行的 8 个像素
+      if (temp & 0x80) {          // 如果最高位是 1，画字体颜色
+        TFT_WriteData16(color);
+      } else { // 如果是 0，画背景颜色
+        TFT_WriteData16(bgcolor);
+      }
+      temp <<= 1; // 左移处理下一个像素
+    }
   }
 }
