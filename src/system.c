@@ -1,8 +1,11 @@
 #include "system.h"
 #include "stm32f103.h"
+#include "tft.h"
 #include <stdint.h>
 
 extern uint32_t _estack;
+
+uint8_t x = 0, y = 0;
 
 volatile uint32_t msTicks = 0;
 
@@ -42,6 +45,9 @@ void SystemInit(void) {
     ;
 
   SysTick_Config(SYSTEM_CLOCK_FREQ / 1000);
+  TFT_Init();
+  TFT_Clear(TFT_BLACK);
+  printk("SystemInit Success!", 19);
 }
 
 uint32_t SysTick_Config(uint32_t ticks) {
@@ -58,5 +64,21 @@ uint32_t SysTick_Config(uint32_t ticks) {
 void Delay_ms(uint32_t ms) {
   uint32_t start = msTicks;
   while ((msTicks - start) < ms) {
+  }
+}
+
+void printk(const char *str, uint32_t size) {
+  for (uint32_t i = 0; i < size; i++) {
+    char ch = str[i];
+    if (x + 8 > TFT_WIDTH) {
+      x = 0;
+      y = y + 16;
+    }
+    if (y + 16 > TFT_HEIGHT) {
+      x = 0;
+      y = 0;
+    }
+    TFT_SetChar(x, y, ch, TFT_RED, TFT_BLACK);
+    x += 8;
   }
 }
