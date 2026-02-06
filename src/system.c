@@ -6,14 +6,11 @@ extern uint32_t _estack;
 
 volatile uint32_t msTicks = 0;
 
-void SysTick_Handler(void){
-  msTicks++;
-}
+void SysTick_Handler(void) { msTicks++; }
 
 void SystemInit(void) {
   // enable HSE clock (8MHZ)
   RCC->CR |= RCC_CR_HSEON;
-  
 
   while (!(RCC->CR & RCC_CR_HSERDY))
     ;
@@ -33,9 +30,10 @@ void SystemInit(void) {
 
   RCC->CFGR &= ~(0x3UL << 0);
   /*
-  现象：当你的 PLL 成功起振并准备将系统频率提升到 72MHz 时，如果 Flash 的读取速度跟不上 CPU 的速度，
-  CPU 取不到指令，就会立即触发 BusFault 继而转为 HardFault。
-  解决：在切换到 PLL 之前，必须设置 Flash Latency。对于 72MHz，通常需要 2 个等待周期（WS）。
+  现象：当你的 PLL 成功起振并准备将系统频率提升到 72MHz 时，如果 Flash
+  的读取速度跟不上 CPU 的速度， CPU 取不到指令，就会立即触发 BusFault 继而转为
+  HardFault。 解决：在切换到 PLL 之前，必须设置 Flash Latency。对于
+  72MHz，通常需要 2 个等待周期（WS）。
   */
   FLASH_ACR |= FLASH_ACR_LATENCY_2;
   RCC->CFGR |= RCC_CFGR_SW_PLL;

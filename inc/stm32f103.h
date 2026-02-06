@@ -44,6 +44,7 @@ typedef struct {
 #define RCC_APB1ENR_USART2EN (1UL << 17)
 #define RCC_APB1ENR_USART3EN (1UL << 18)
 #define RCC_APB1ENR_SPI2EN (1UL << 14)
+#define RCC_APB1ENR_SPI3EN (1UL << 15)
 
 #define GPIOA_BASE (APB2PERIPH_BASE + 0x0800UL)
 #define GPIOB_BASE (APB2PERIPH_BASE + 0x0C00UL)
@@ -123,11 +124,60 @@ typedef struct {
 #define APB1_CLOCK_FREQ (SYSTEM_CLOCK_FREQ / 2)
 #define APB2_CLOCK_FREQ SYSTEM_CLOCK_FREQ
 
+#define FLASH_R_BASE 0x40022000UL
+#define FLASH_ACR (*(volatile uint32_t *)(FLASH_R_BASE + 0x00))
 
-#define FLASH_R_BASE       0x40022000UL
-#define FLASH_ACR          (*(volatile uint32_t *)(FLASH_R_BASE + 0x00))
+#define FLASH_ACR_LATENCY_2                                                    \
+  (0x2UL << 0) // 2个等待周期，适用于 48MHz < SYSCLK <= 72MHz
+#define FLASH_ACR_PRFTBE (0x1UL << 4) // 开启预取缓冲区 (建议开启以提升性能)
 
-#define FLASH_ACR_LATENCY_2  (0x2UL << 0)  // 2个等待周期，适用于 48MHz < SYSCLK <= 72MHz
-#define FLASH_ACR_PRFTBE     (0x1UL << 4)  // 开启预取缓冲区 (建议开启以提升性能)
+#define SPI1_BASE (APB2PERIPH_BASE + 0x3000UL)
+#define SPI2_BASE (APB1PERIPH_BASE + 0x3800UL)
+#define SPI3_BASE (APB1PERIPH_BASE + 0x3C00UL)
+
+#define SPI1 ((SPI_TypeDef *)SPI1_BASE)
+#define SPI2 ((SPI_TypeDef *)SPI2_BASE)
+#define SPI3 ((SPI_TypeDef *)SPI3_BASE)
+
+typedef struct {
+  volatile uint32_t CR1;
+  volatile uint32_t CR2;
+  volatile uint32_t SR;
+  volatile uint32_t DR;
+  volatile uint32_t CRCPR;
+  volatile uint32_t RXCRCR;
+  volatile uint32_t TXCRCR;
+  volatile uint32_t I2SCFGR;
+  volatile uint32_t I2SPR;
+} SPI_TypeDef;
+
+#define SPI_CR1_CPHA (1UL << 0)
+#define SPI_CR1_CPOL (1UL << 1)
+#define SPI_CR1_MSTR (1UL << 2)
+#define SPI_CR1_BR (0x7UL << 3)
+#define SPI_CR1_SPE (1UL << 6)
+#define SPI_CR1_LSBFIRST (1UL << 7)
+#define SPI_CR1_SSI (1UL << 8)
+#define SPI_CR1_SSM (1UL << 9)
+#define SPI_CR1_DFF (1UL << 11)
+
+#define SPI_SR_RXNE (1UL << 0)
+#define SPI_SR_TXE (1UL << 1)
+#define SPI_SR_BSY (1UL << 7)
+
+#define AFIO_BASE (APB2PERIPH_BASE + 0x0000UL)
+
+typedef struct {
+  volatile uint32_t EVCR;      // 事件控制寄存器
+  volatile uint32_t MAPR;      // 复用重映射寄存器 (最关键)
+  volatile uint32_t EXTICR[4]; // 外部中断配置寄存器
+  uint32_t RESERVED0;          // 保留
+  volatile uint32_t MAPR2;     // 复用重映射寄存器 2
+} AFIO_TypeDef;
+
+#define AFIO ((AFIO_TypeDef *)AFIO_BASE)
+
+// 相关宏定义
+#define RCC_APB2ENR_AFIOEN (1UL << 0)
 
 #endif
