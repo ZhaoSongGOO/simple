@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 extern uint32_t _estack;
+char buffer[128];
 
 volatile uint32_t msTicks = 0;
 
@@ -66,3 +67,25 @@ void Delay_ms(uint32_t ms) {
   while ((msTicks - start) < ms) {
   }
 }
+
+void Trigger_SVC(SysCall_t sc_id) {
+  __asm volatile("mov r0, %0 \n"
+                 "svc #0 \n"
+                 :
+                 : "r"(sc_id)
+                 : "r0");
+}
+
+void print(const char *str) {
+  uint16_t size = len(str);
+  if (size > 128) {
+    size = 128;
+  }
+  for (uint8_t i = 0; i < size; i++) {
+    buffer[i] = str[i];
+  }
+  buffer[size - 1] = '\0';
+  Trigger_SVC(SYS_PRINT);
+}
+
+void Trigger_SVC_Print() { printk_new_line(buffer); }

@@ -16,3 +16,6 @@ clang-format -i src/font.c
 
 clang-format -i inc/log.h
 clang-format -i src/log.c
+
+clang-format -i inc/root.h
+clang-format -i src/root.c

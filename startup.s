@@ -41,9 +41,6 @@ isr_vector:
 .weak UsageFault_Handler
 .thumb_set UsageFault_Handler,Default_Handler
 
-.weak SVC_Handler
-.thumb_set SVC_Handler,Default_Handler
-
 .weak DebugMon_Handler
 .thumb_set DebugMon_Handler,Default_Handler
 
@@ -57,6 +54,15 @@ isr_vector:
 .section .text.Default_Handler,"ax",%progbits
 Default_Handler:
     b .
+
+.section .text.SVC_Handler
+.type SVC_Handler, %function
+SVC_Handler:
+    TST LR, #4       
+    ITE EQ             
+    MRSEQ R0, MSP       
+    MRSNE R0, PSP      
+    B C_SVC_Handler   
 
 .section .text.Reset_Handler
 .type Reset_Handler, %function

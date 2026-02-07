@@ -2,7 +2,6 @@
 
 #include "font.h"
 #include "tft.h"
-#include <stdint.h>
 
 uint8_t col = 0, row = 0;
 
@@ -16,7 +15,7 @@ void log_error(const char *msg) { log(msg, ERROR); }
 extern Log_Typedef Log = {
     .i = log_info, .d = log_debug, .e = log_error, .w = log_warn};
 
-static uint32_t len(const char *str) {
+uint32_t len(const char *str) {
   if (str == (void *)0) {
     return 0;
   }
@@ -24,6 +23,12 @@ static uint32_t len(const char *str) {
   while (str[result++] != '\0')
     ;
   return result;
+}
+
+void printk_new_line(const char *str) {
+  col = 0;
+  row += 1;
+  printk(str);
 }
 
 void printk(const char *str) {
