@@ -12,3 +12,7 @@ clang-format -i inc/spi.h
 clang-format -i src/spi.c
 
 clang-format -i inc/font.h
+clang-format -i src/font.c
+
+clang-format -i inc/log.h
+clang-format -i src/log.c
