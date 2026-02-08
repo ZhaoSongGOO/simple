@@ -1,5 +1,4 @@
 #include "gpio.h"
-#include "log.h"
 #include "system.h"
 #include "tft.h"
 #include "user.h"
